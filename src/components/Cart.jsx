@@ -2,59 +2,65 @@ import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
 
 export default function Cart() {
-  const { cartItems, removeFromCart, addToCart } = useCart();
+  const { cartItems, removeFromCart, addToCart, decreaseQuantity } = useCart();
   const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity || 0), 0);
 
-  const handleAddToCart = (item) => {
+  const handleIncrement = (item) => {
     addToCart(item);
   };
 
+  const handleDecrement = (itemId) => {
+    decreaseQuantity(itemId);
+  };
+
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm">
-      <h2 className="text-2xl font-bold mb-6">Cart</h2>
+    <div className="bg-gray-50 p-6 rounded-lg">
+      <h2 className="text-xl font-bold mb-6">Cart</h2>
 
       {cartItems.length === 0 ? (
         <p>Your cart is empty.</p>
       ) : (
-        <div className="space-y-4 mb-6">
+        <div className="space-y-4">
           {cartItems.map((item) => (
             <div key={item.id} className="flex items-center gap-4">
               <img
                 src={item.image}
                 alt={item.name}
-                className="w-12 h-12 object-cover rounded-lg flex-shrink-0"
+                className="w-16 h-16 object-cover rounded"
               />
-              <div className="flex items-center gap-2">
+              <div className="flex-grow">
+                <h3 className="font-medium text-lg">{item.name}</h3>
+                <div className="text-gray-900">${item.price}</div>
+              </div>
+              <div className="flex items-center justify-center gap-3">
                 <button
-                  onClick={() => removeFromCart(item.id)}
-                  className="w-6 h-6 flex items-center justify-center border-2 border-black rounded-full"
+                  onClick={() => handleDecrement(item.id)}
+                  className="w-8 h-8 flex items-center justify-center bg-[#E6D5B8] rounded text-black text-lg font-medium"
                 >
                   -
                 </button>
-                <span className="w-6 text-center">{item.quantity}</span>
+                <span className="w-8 text-center text-lg font-medium">
+                  {item.quantity || 1}
+                </span>
                 <button
-                  onClick={() => handleAddToCart(item)}
-                  className="w-6 h-6 flex items-center justify-center border-2 border-black rounded-full"
+                  onClick={() => handleIncrement(item)}
+                  className="w-8 h-8 flex items-center justify-center bg-[#E6D5B8] rounded text-black text-lg font-medium"
                 >
                   +
                 </button>
               </div>
-              <div className="flex-grow">
-                <span className="font-medium">{item.name}</span>
-              </div>
-              <span className="font-semibold flex-shrink-0">${(item.price * item.quantity || 0).toFixed(2)}</span>
             </div>
           ))}
         </div>
       )}
-      <div className="border-t border-gray-200 pt-4">
+
+      <div className="mt-6">
         <div className="flex justify-between items-center mb-4">
-          <span className="text-xl font-bold">Total:</span>
-          <span className="text-xl font-bold">${total.toFixed(2)}</span>
+          <span className="text-lg font-bold">Total: ${total.toFixed(2)}</span>
         </div>
         <Link to="/payment">
           <button
-            className="w-full px-4 py-2 bg-[#E6D5B8] rounded-full text-black font-semibold hover:bg-[#d6c5a8] transition-colors"
+            className="w-full py-2 bg-[#E6D5B8] rounded text-black font-medium hover:bg-[#d6c5a8] transition-colors"
           >
             Proceed To Payment
           </button>
