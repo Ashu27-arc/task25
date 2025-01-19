@@ -8,7 +8,6 @@ export default function Payment() {
   const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity || 0), 0);
 
   const [formData, setFormData] = useState({
-    cardName: '',
     cardNumber: '',
     expiryDate: '',
     cvv: '',
@@ -31,107 +30,100 @@ export default function Payment() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-gray-50 rounded-lg">
-      <h2 className="text-2xl font-bold mb-6">Payment Details</h2>
-      
-      <div className="mb-6">
-        <h3 className="text-lg font-medium mb-2">Order Summary</h3>
-        <div className="flex justify-between items-center">
-          <span>Total Amount:</span>
-          <span className="font-bold">${total.toFixed(2)}</span>
+    <div className="flex justify-between max-w-6xl mx-auto p-6">
+      <div className="w-2/3">
+        <div className="mb-6">
+          <label className="mr-8">
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="cashOnDelivery"
+              checked={formData.paymentMethod === 'cashOnDelivery'}
+              onChange={handleChange}
+            />
+            <span className="ml-2">Cash on Delivery</span>
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="creditCard"
+              checked={formData.paymentMethod === 'creditCard'}
+              onChange={handleChange}
+            />
+            <span className="ml-2">Credit Card</span>
+          </label>
         </div>
+
+        {formData.paymentMethod === 'creditCard' && (
+          <div className="bg-white p-8 rounded-lg shadow-sm max-w-xl">
+            <div className="mb-6">
+              <label className="block text-lg font-medium mb-2">Enter your card number:</label>
+              <input
+                type="text"
+                name="cardNumber"
+                value={formData.cardNumber}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+                required
+              />
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-lg font-medium mb-2">Enter your card's expiry date:</label>
+              <input
+                type="text"
+                name="expiryDate"
+                value={formData.expiryDate}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+                required
+              />
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-lg font-medium mb-2">Enter your CVV number:</label>
+              <input
+                type="text"
+                name="cvv"
+                value={formData.cvv}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+                maxLength="3"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-40 py-2 bg-[#E6D5B8] rounded text-black font-medium hover:bg-[#d6c5a8] transition-colors"
+              onClick={handleSubmit}
+            >
+              Confirm Payment
+            </button>
+          </div>
+        )}
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Select Payment Method</label>
-          <div>
-            <label>
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="cashOnDelivery"
-                checked={formData.paymentMethod === 'cashOnDelivery'}
-                onChange={handleChange}
-              />
-              Cash on Delivery
-            </label>
-            <label className="ml-4">
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="creditCard"
-                checked={formData.paymentMethod === 'creditCard'}
-                onChange={handleChange}
-              />
-              Credit Card
-            </label>
+      <div className="w-1/3 bg-gray-50 p-6 rounded-lg h-fit">
+        <h2 className="text-2xl font-bold mb-6">Cart</h2>
+        {cartItems.map((item) => (
+          <div key={item.id} className="flex items-center gap-4 mb-4">
+            <img src={item.image} alt={item.name} className="w-16 h-16 object-cover" />
+            <div>
+              <h3 className="font-medium">{item.name}</h3>
+              <p>${item.price}</p>
+            </div>
           </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">Card Holder Name</label>
-          <input
-            type="text"
-            name="cardName"
-            value={formData.cardName}
-            onChange={handleChange}
-            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#E6D5B8]"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">Card Number</label>
-          <input
-            type="text"
-            name="cardNumber"
-            value={formData.cardNumber}
-            onChange={handleChange}
-            placeholder="1234 5678 9012 3456"
-            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#E6D5B8]"
-            maxLength="19"
-            required
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Expiry Date</label>
-            <input
-              type="text"
-              name="expiryDate"
-              value={formData.expiryDate}
-              onChange={handleChange}
-              placeholder="MM/YY"
-              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#E6D5B8]"
-              maxLength="5"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">CVV</label>
-            <input
-              type="text"
-              name="cvv"
-              value={formData.cvv}
-              onChange={handleChange}
-              placeholder="123"
-              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#E6D5B8]"
-              maxLength="3"
-              required
-            />
-          </div>
-        </div>
-
+        ))}
+        <div className="text-xl font-bold mt-6 mb-4">Total: ${total.toFixed(2)}</div>
         <button
-          type="submit"
-          className="w-full py-2 bg-[#E6D5B8] rounded text-black font-medium hover:bg-[#d6c5a8] transition-colors mt-6"
+          onClick={() => navigate('/')}
+          className="w-full py-2 bg-[#E6D5B8] rounded text-black font-medium hover:bg-[#d6c5a8] transition-colors"
         >
-          Confirm Payment
+          Go back to Shopping
         </button>
-      </form>
+      </div>
     </div>
   );
 } 
