@@ -112,7 +112,7 @@ export default function Payment() {
             <img src={item.image} alt={item.name} className="w-16 h-16 object-cover" />
             <div>
               <h3 className="font-medium">{item.name}</h3>
-              <p>${item.price}</p>
+              <p>${item.price} x {item.quantity}</p>
             </div>
           </div>
         ))}
