@@ -1,4 +1,5 @@
-import { useCart } from '../context/CartContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart } from '../features/cartSlice';
 import { Link } from 'react-router-dom';
 
 const products = [
@@ -38,39 +39,53 @@ const products = [
     price: 68,
     image: 'https://placehold.co/300x300?text=ASSIAN+Men\'s',
   },
-  
-  
 ];
 
 export default function ProductList() {
-  const { addToCart } = useCart();
+  const dispatch = useDispatch();
+  const { items, total } = useSelector((state) => state.cart);
 
   return (
-    <div className="grid grid-cols-2 gap-8">
-      {products.map((product) => (
-        <div key={product.id} className="max-w-sm">
-          <img 
-            src={product.image}
-            alt={product.name}
-            className="w-full h-auto mb-4 rounded-lg"
-          />
-          <div className="bg-[#E6D5B8] p-6 rounded-lg">
-            <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
-            <p className="text-xl mb-4">${product.price}</p>
-            <button
-              onClick={() => addToCart(product)}
-              className="w-full px-4 py-2 bg-transparent border-2 border-black rounded-full hover:bg-[#d6c5a8] transition-colors"
-            >
-              Add to Cart
-            </button>
-          </div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Our Products</h1>
+        <div className="text-right">
+          <p className="text-lg">Cart Total: ${total}</p>
+          <p className="text-sm text-gray-600">Items in cart: {items.length}</p>
         </div>
-      ))}
-      {/* <div className="col-span-2">
-        <Link to="/payment" className="w-full px-4 py-2 bg-[#E6D5B8] text-center rounded-full">
-          Proceed to Payment
-        </Link>
-      </div> */}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {products.map((product) => (
+          <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+            <img 
+              src={product.image}
+              alt={product.name}
+              className="w-full h-64 object-cover"
+            />
+            <div className="p-6">
+              <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
+              <p className="text-2xl font-bold mb-4">${product.price}</p>
+              <button
+                onClick={() => dispatch(addToCart(product))}
+                className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        ))}
+        {items.length > 0 && (
+          <div className="fixed bottom-4 right-4">
+            <Link 
+              to="/payment" 
+              className="block px-6 py-3 bg-green-600 text-white rounded-full shadow-lg hover:bg-green-700 transition-colors"
+            >
+              Proceed to Payment (${total})
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
   );
 } 
